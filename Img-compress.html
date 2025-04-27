@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelPerfect Pro | Advanced Image Tool</title>
+    <meta name="description" content="Compress, convert and enhance images without quality loss. Supports JPG, PNG, WEBP, PDF">
+    <!-- Fonts & Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7857610555538969" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #f72585;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #1a1a2e;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --success: #38b000;
+            --warning: #ff9e00;
+            --error: #ef233c;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f7ff;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism Panel */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+            z-index: 1;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, white, #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 992px) {
+            .container {
+                grid-template-columns: 7fr 3fr;
+            }
+        }
+
+        /* Tool Section */
+        .tool-section {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Upload Area */
+        .upload-container {
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .upload-area {
+            border: 2px dashed rgba(67, 97, 238, 0.3);
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            background: rgba(67, 97, 238, 0.03);
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(67, 97, 238, 0.05);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .upload-area.active {
+            border-color: var(--success);
+            background: rgba(56, 176, 0, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 3.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            opacity: 0.8;
+        }
+
+        .upload-text h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .upload-text p {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        .file-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* Preview */
+        .preview-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .image-preview:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Controls */
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .control-group {
+            margin-bottom: 1rem;
+        }
+
+        .control-label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .slider {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--light-gray);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .slider:hover {
+            background: #d6d6d6;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            background: var(--primary-dark);
+        }
+
+        .slider-value {
+            min-width: 45px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--light-gray);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background-color: white;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.8rem center;
+            background-size: 1rem;
+        }
+
+        select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem 1.8rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 14px rgba(67, 97, 238, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-lg {
+            padding: 1.2rem 2rem;
+            font-size: 1.1rem;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        .btn i {
+            font-size: 1.1rem;
+        }
+
+        /* Result Section */
+        .result-container {
+            display: none;
+            margin-top: 2rem;
+            animation: fadeIn 0.5s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .result-title {
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+
+        .file-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .stat-value.small {
+            font-size: 1.1rem;
+        }
+
+        .stat-value.primary {
+            color: var(--primary);
+        }
+
+        .stat-value.success {
+            color: var(--success);
+        }
+
+        .result-preview-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .result-preview {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+
+        .result-preview:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Ad Container */
+        .ad-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Features */
+        .features-section {
+            margin: 5rem 0;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.2rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .section-title p {
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 1.8rem;
+            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.2);
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .feature-desc {
+            color: var(--gray);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, white, #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .footer-about p {
+            opacity: 0.8;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: var(--transition);
+        }
+
+        .social-link:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .footer-links h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: none;
+            width: 50px;
+            height: 50px;
+            margin: 2rem auto;
+            border: 5px solid rgba(67, 97, 238, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--dark);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow-lg);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            max-width: 350px;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+
+        .toast.error {
+            background: var(--error);
+        }
+
+        .toast.warning {
+            background: var(--warning);
+        }
+
+        .toast i {
+            font-size: 1.2rem;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .header-content, .container, .features-section {
+                padding: 0 1.5rem;
+            }
+            
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .file-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .feature-card {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .tagline {
+                font-size: 1rem;
+            }
+            
+            .upload-area {
+                padding: 2rem 1rem;
+            }
+            
+            .upload-text h3 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <h1>PixelPerfect Pro</h1>
+            <p class="tagline">Advanced image compression and conversion with premium quality preservation</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Tool Section -->
+        <div class="tool-section">
+            <!-- Upload Area -->
+            <div class="glass-panel">
+                <div class="upload-container">
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="upload-text">
+                            <h3>Drag & Drop Your Image</h3>
+                            <p>or click to browse files (JPG, PNG, WEBP, GIF)</p>
+                        </div>
+                        <input type="file" id="fileInput" class="file-input" accept="image/*">
+                    </div>
+                    
+                    <div class="preview-container" id="previewContainer"></div>
+                </div>
+                
+                <!-- Controls -->
+                <div class="controls">
+                    <div class="control-group">
+                        <label class="control-label">Compression Quality</label>
+                        <div class="slider-container">
+                            <input type="range" min="10" max="100" value="85" class="slider" id="qualitySlider">
+                            <span class="slider-value" id="qualityValue">85%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="outputFormat" class="control-label">Output Format</label>
+                        <select id="outputFormat">
+                            <option value="jpg">JPG (Recommended)</option>
+                            <option value="png">PNG (Lossless)</option>
+                            <option value="webp">WEBP (Modern)</option>
+                            <option value="pdf">PDF Document</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="resizeOption" class="control-label">Resize Percentage</label>
+                        <div class="slider-container">
+                            <input type="range" min="10" max="100" value="100" class="slider" id="resizeSlider">
+                            <span class="slider-value" id="resizeValue">100%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Process Button -->
+                <button id="processBtn" class="btn btn-primary btn-lg btn-block">
+                    <i class="fas fa-magic"></i> Optimize Image
+                </button>
+                
+                <!-- Loading Spinner -->
+                <div class="spinner" id="spinner"></div>
+                
+                <!-- Results -->
+                <div class="result-container" id="resultContainer">
+                    <div class="result-header">
+                        <h3 class="result-title">Optimization Results</h3>
+                    </div>
+                    
+                    <div class="file-stats">
+                        <div class="stat-card">
+                            <div class="stat-label">Original Size</div>
+                            <div class="stat-value" id="originalSize">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Compressed Size</div>
+                            <div class="stat-value primary" id="compressedSize">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Reduction</div>
+                            <div class="stat-value success" id="reduction">-</div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-preview-container">
+                        <img src="" alt="Processed Image" class="result-preview" id="resultPreview">
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <a href="#" class="btn btn-primary" id="downloadBtn">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                        <button class="btn btn-primary" id="newImageBtn" style="background: var(--gray);">
+                            <i class="fas fa-redo"></i> Process New
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Ad Container -->
+            <div class="ad-container glass-panel">
+                <!-- AdSense Ad Unit -->
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-7857610555538969"
+                     data-ad-slot="1234567890"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+            
+            <!-- Additional Tools -->
+            <div class="glass-panel" style="padding: 1.5rem;">
+                <h3 style="margin-bottom: 1.5rem; color: var(--dark);">Advanced Tools</h3>
+                
+                <div class="control-group">
+                    <label class="control-label">Brightness</label>
+                    <div class="slider-container">
+                        <input type="range" min="-100" max="100" value="0" class="slider" id="brightnessSlider">
+                        <span class="slider-value" id="brightnessValue">0</span>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Contrast</label>
+                    <div class="slider-container">
+                        <input type="range" min="-100" max="100" value="0" class="slider" id="contrastSlider">
+                        <span class="slider-value" id="contrastValue">0</span>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Saturation</label>
+                    <div class="slider-container">
+                        <input type="range" min="-100" max="100" value="0" class="slider" id="saturationSlider">
+                        <span class="slider-value" id="saturationValue">0</span>
+                    </div>
+                </div>
+                
+                <button id="applyFiltersBtn" class="btn btn-primary" style="margin-top: 1rem;">
+                    <i class="fas fa-sliders-h"></i> Apply Filters
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Features Section -->
+    <div class="features-section">
+        <div class="section-title">
+            <h2>Why Choose PixelPerfect Pro?</h2>
+            <p>Our advanced algorithms deliver superior results compared to other online tools</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card glass-panel">
+                <div class="feature-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h3 class="feature-title">Lightning Fast</h3>
+                <p class="feature-desc">Process images in seconds with our optimized browser-based engine that doesn't require uploading to servers.</p>
+            </div>
+            
+            <div class="feature-card glass-panel">
+                <div class="feature-icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <h3 class="feature-title">Quality Preservation</h3>
+                <p class="feature-desc">Smart compression algorithms reduce file size while maintaining visual quality better than competitors.</p>
+            </div>
+            
+            <div class="feature-card glass-panel">
+                <div class="feature-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h3 class="feature-title">Privacy Focused</h3>
+                <p class="feature-desc">Your images never leave your device. All processing happens locally in your browser.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-about">
+                <div class="footer-logo">PixelPerfect Pro</div>
+                <p>The most advanced online image optimization tool. Free to use with no hidden costs.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Features</a></li>
+                    <li><a href="#">How It Works</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-links">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-links">
+                <h3>Supported Formats</h3>
+                <ul>
+                    <li><a href="#">JPG/JPEG</a></li>
+                    <li><a href="#">PNG</a></li>
+                    <li><a href="#">WEBP</a></li>
+                    <li><a href="#">PDF</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            &copy; 2023 PixelPerfect Pro. All rights reserved.
+        </div>
+    </footer>
+    
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+    
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            const previewContainer = document.getElementById('previewContainer');
+            const qualitySlider = document.getElementById('qualitySlider');
+            const qualityValue = document.getElementById('qualityValue');
+            const resizeSlider = document.getElementById('resizeSlider');
+            const resizeValue = document.getElementById('resizeValue');
+            const outputFormat = document.getElementById('outputFormat');
+            const processBtn = document.getElementById('processBtn');
+            const spinner = document.getElementById('spinner');
+            const resultContainer = document.getElementById('resultContainer');
+            const resultPreview = document.getElementById('resultPreview');
+            const originalSize = document.getElementById('originalSize');
+            const compressedSize = document.getElementById('compressedSize');
+            const reduction = document.getElementById('reduction');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const newImageBtn = document.getElementById('newImageBtn');
+            const brightnessSlider = document.getElementById('brightnessSlider');
+            const brightnessValue = document.getElementById('brightnessValue');
+            const contrastSlider = document.getElementById('contrastSlider');
+            const contrastValue = document.getElementById('contrastValue');
+            const saturationSlider = document.getElementById('saturationSlider');
+            const saturationValue = document.getElementById('saturationValue');
+            const applyFiltersBtn = document.getElementById('applyFiltersBtn');
+            const toast = document.getElementById('toast');
+            
+            // Variables
+            let originalFile = null;
+            let originalImageData = null;
+            let processedImageData = null;
+            
+            // Event Listeners
+            uploadArea.addEventListener('click', () => fileInput.click());
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('active');
+            });
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('active');
+            });
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('active');
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    handleFileSelect(e.dataTransfer.files[0]);
+                }
+            });
+            
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length) {
+                    handleFileSelect(e.target.files[0]);
+                }
+            });
+            
+            qualitySlider.addEventListener('input', () => {
+                qualityValue.textContent = `${qualitySlider.value}%`;
+            });
+            
+            resizeSlider.addEventListener('input', () => {
+                resizeValue.textContent = `${resizeSlider.value}%`;
+            });
+            
+            brightnessSlider.addEventListener('input', () => {
+                brightnessValue.textContent = brightnessSlider.value;
+            });
+            
+            contrastSlider.addEventListener('input', () => {
+                contrastValue.textContent = contrastSlider.value;
+            });
+            
+            saturationSlider.addEventListener('input', () => {
+                saturationValue.textContent = saturationSlider.value;
+            });
+            
+            processBtn.addEventListener('click', processImage);
+            downloadBtn.addEventListener('click', downloadImage);
+            newImageBtn.addEventListener('click', resetTool);
+            applyFiltersBtn.addEventListener('click', applyFilters);
+            
+            // Functions
+            function handleFileSelect(file) {
+                if (!file.type.match('image.*')) {
+                    showToast('Please select an image file', 'error');
+                    return;
+                }
+                
+                originalFile = file;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewContainer.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview" class="image-preview">
+                    `;
+                    
+                    // Store original image data
+                    const img = new Image();
+                    img.onload = function() {
+                        originalImageData = {
+                            src: e.target.result,
+                            width: img.width,
+                            height: img.height,
+                            size: file.size
+                        };
+                        
+                        // Update original size display
+                        originalSize.textContent = formatFileSize(file.size);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            function processImage() {
+                if (!originalFile) {
+                    showToast('Please select an image first', 'error');
+                    return;
+                }
+                
+                spinner.style.display = 'block';
+                processBtn.disabled = true;
+                
+                // Simulate processing delay (remove in production)
+                setTimeout(() => {
+                    const quality = parseInt(qualitySlider.value) / 100;
+                    const resizeFactor = parseInt(resizeSlider.value) / 100;
+                    const format = outputFormat.value;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = new Image();
+                        img.onload = function() {
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            
+                            // Calculate new dimensions
+                            const newWidth = Math.round(img.width * resizeFactor);
+                            const newHeight = Math.round(img.height * resizeFactor);
+                            
+                            canvas.width = newWidth;
+                            canvas.height = newHeight;
+                            
+                            // Draw image with new dimensions
+                            ctx.drawImage(img, 0, 0, newWidth, newHeight);
+                            
+                            // Apply filters
+                            applyCanvasFilters(ctx, canvas);
+                            
+                            // Convert to selected format
+                            let mimeType;
+                            switch (format) {
+                                case 'jpg':
+                                    mimeType = 'image/jpeg';
+                                    break;
+                                case 'png':
+                                    mimeType = 'image/png';
+                                    break;
+                                case 'webp':
+                                    mimeType = 'image/webp';
+                                    break;
+                                case 'pdf':
+                                    // PDF conversion would require a library like jsPDF
+                                    // For demo purposes, we'll just use JPEG
+                                    mimeType = 'image/jpeg';
+                                    break;
+                                default:
+                                    mimeType = 'image/jpeg';
+                            }
+                            
+                            // Convert to data URL
+                            const dataURL = canvas.toDataURL(mimeType, quality);
+                            
+                            // Calculate file size (approximation)
+                            const dataSize = Math.round(dataURL.length * 0.75); // Base64 is ~33% larger
+                            
+                            // Store processed image data
+                           
